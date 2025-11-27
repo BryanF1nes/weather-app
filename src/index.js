@@ -1,15 +1,11 @@
 import "./styles.css";
 import { getWeatherData } from "./modules/fetchData.js";
 
-/* ----------------------------- HELPERS ----------------------------- */
-
 function getOrdinal(n) {
     const s = ["th", "st", "nd", "rd"];
     const v = n % 100;
     return s[(v - 20) % 10] || s[v] || s[0];
 }
-
-/* ----------------------------- DOM ELEMENTS ----------------------------- */
 
 // Main section
 const locationEl = document.querySelector(".location");
@@ -43,19 +39,12 @@ function updateMainSection(day, locationName) {
     dewPointEl.textContent = `Dew Point: ${Math.round(day.dew)}°F`;
 }
 
-/* ----------------------------- MAIN RENDER FUNCTION ----------------------------- */
-
 async function renderWeather(location) {
-    // Fetch API data
     const data = await getWeatherData(location);
-    console.log(data);
 
-    /* ---------- Update Main Weather Section ---------- */
     updateMainSection(data.days[0], data.resolvedAddress);
 
-    /* ---------- Update 5-Day Forecast Cards ---------- */
-
-    fiveDay.innerHTML = ""; // Clear previous entries
+    fiveDay.innerHTML = "";
 
     const days = data.days;
 
@@ -78,7 +67,6 @@ async function renderWeather(location) {
             iconUrl = "./assets/icons/clear-day.svg"; // fallback
         }
 
-        // Build card HTML
         card.innerHTML = `
             <p>${formatted}</p>
             <img src="${iconUrl}" />
@@ -99,8 +87,6 @@ async function renderWeather(location) {
     if (fiveDay.firstChild) fiveDay.firstChild.classList.add("selected");
 }
 
-/* ----------------------------- FORM SUBMISSION ----------------------------- */
-
 form.addEventListener("submit", (e) => {
     e.preventDefault();
     const searchValue = e.target.search.value.trim();
@@ -108,7 +94,5 @@ form.addEventListener("submit", (e) => {
 
     renderWeather(searchValue);
 });
-
-/* ----------------------------- INITIAL LOAD ----------------------------- */
 
 renderWeather("London, United Kingdom");
