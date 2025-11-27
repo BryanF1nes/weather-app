@@ -30,28 +30,24 @@ const fiveDay = document.querySelector(".five-day");
 // Form
 const form = document.querySelector(".search form");
 
-function updateMainSection(day, locationName) {
-    locationEl.textContent = locationName;
-    tempEl.textContent = `${Math.round(day.temp || day.tempmax)}°F`; // fallback to tempmax
-    forecastEl.textContent = day.conditions;
-
-    feelsLikeEl.textContent = `Feels Like: ${Math.round(day.feelslike)}°F`;
-    windEl.textContent = `Wind: ${day.windspeed} mph`;
-    barometerEl.textContent = `Barometer: ${day.pressure} mb`;
-    visibilityEl.textContent = `Visibility: ${day.visibility} mi`;
-    humidityEl.textContent = `Humidity: ${day.humidity}%`;
-    dewPointEl.textContent = `Dew Point: ${Math.round(day.dew)}°F`;
-}
-
 /* ----------------------------- MAIN RENDER FUNCTION ----------------------------- */
 
 async function renderWeather(location) {
     // Fetch API data
     const data = await getWeatherData(location);
-    console.log(data);
 
     /* ---------- Update Main Weather Section ---------- */
-    updateMainSection(data.days[0], data.resolvedAddress);
+
+    locationEl.textContent = data.resolvedAddress;
+    tempEl.textContent = `${Math.round(data.currentConditions.temp)}°F`;
+    forecastEl.textContent = data.currentConditions.conditions;
+
+    feelsLikeEl.textContent = `Feels Like: ${Math.round(data.currentConditions.feelslike)}°F`;
+    windEl.textContent = `Wind: ${data.currentConditions.windspeed} mph`;
+    barometerEl.textContent = `Barometer: ${data.currentConditions.pressure} mb`;
+    visibilityEl.textContent = `Visibility: ${data.currentConditions.visibility} mi`;
+    humidityEl.textContent = `Humidity: ${data.currentConditions.humidity}%`;
+    dewPointEl.textContent = `Dew Point: ${data.currentConditions.dew}°F`;
 
     /* ---------- Update 5-Day Forecast Cards ---------- */
 
@@ -82,21 +78,12 @@ async function renderWeather(location) {
         card.innerHTML = `
             <p>${formatted}</p>
             <img src="${iconUrl}" />
-            <p>${Math.round(day.tempmax)}°H | <span>${Math.round(day.tempmin)}°L</span></p>
+            <p>${Math.round(day.tempmax)}°F / <span>${Math.round(day.tempmin)}°F</span></p>
             <p>${day.conditions}</p>
         `;
 
-        card.addEventListener("click", () => {
-            updateMainSection(day, data.resolvedAddress);
-            // Highlight selected card
-            document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
-            card.classList.add("selected");
-        });
-
         fiveDay.appendChild(card);
     }
-
-    if (fiveDay.firstChild) fiveDay.firstChild.classList.add("selected");
 }
 
 /* ----------------------------- FORM SUBMISSION ----------------------------- */
